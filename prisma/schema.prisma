@@ -25,34 +25,38 @@ enum TaskStatus {
 
 model User {
   id        String   @id @default(uuid())
-  fullName  String
+  fullName  String   @map("full_name")
   email     String   @unique
   password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   memberships     ProjectMembership[]
   taskAssignments TaskAssignment[]
   comments        Comment[]
+
+  @@map("users")
 }
 
 model Project {
   id        String   @id @default(uuid())
   name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   memberships ProjectMembership[]
   tasks       Task[]
+
+  @@map("projects")
 }
 
 model ProjectMembership {
   id        String   @id @default(uuid())
-  projectId String
-  userId    String
+  projectId String   @map("project_id")
+  userId    String   @map("user_id")
   role      Role
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -60,6 +64,7 @@ model ProjectMembership {
   @@unique([projectId, userId]) // Un usuario no puede tener más de una membresía en un proyecto
   @@index([projectId])
   @@index([userId])
+  @@map("project_memberships")
 }
 
 model Task {
@@ -67,20 +72,23 @@ model Task {
   title       String
   description String?
   status      TaskStatus
-  projectId   String
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  projectId   String     @map("project_id")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
 
   project         Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
   taskAssignments TaskAssignment[]
   comments        Comment[]
+
+  @@index([projectId])
+  @@map("tasks")
 }
 
 model TaskAssignment {
-  taskId    String
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  taskId    String   @map("task_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -88,19 +96,21 @@ model TaskAssignment {
   @@unique([taskId, userId]) // Un usuario no puede tener más de una asignación en una tarea
   @@index([taskId])
   @@index([userId])
+  @@map("task_assignments")
 }
 
 model Comment {
   id        String   @id @default(uuid())
   content   String
-  taskId    String
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  taskId    String   @map("task_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([taskId])
   @@index([userId])
+  @@map("comments")
 }

@@ -2,7 +2,12 @@ import type { Request, Response } from "express";
 
 import { asyncHandler } from "@/middlewares";
 import { signInService, signUpService } from "@/services/auth.services";
-import { sendCookie, sendSuccessDataResponse, SEVEN_DAYS } from "@/utils";
+import {
+  sendCookie,
+  sendSuccessDataResponse,
+  sendSuccessStatus,
+  SEVEN_DAYS,
+} from "@/utils";
 
 export const signUp = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -34,4 +39,10 @@ export const signIn = asyncHandler(async (req: Request, res: Response) => {
     path: "/api/v1/auth/refresh-token",
   });
   sendSuccessDataResponse(res, "Usuario autenticado exitosamente", user);
+});
+
+export const signOut = asyncHandler(async (_req: Request, res: Response) => {
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+  sendSuccessStatus(res, "Usuario deslogueado exitosamente");
 });

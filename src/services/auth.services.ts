@@ -4,6 +4,7 @@ import {
   ConflictError,
   NotFoundError,
   comparePassword,
+  generateAuthTokens,
 } from "@/utils";
 
 const prisma = new PrismaClient();
@@ -28,7 +29,14 @@ export const signUpService = async (email: string, password: string) => {
   if (!user) throw new NotFoundError("No se pudo crear el usuario");
 
   const { password: _, ...userWithoutPassword } = user;
-  return userWithoutPassword;
+
+  const { accessToken, refreshToken } = generateAuthTokens(user.id, user.email);
+
+  return {
+    user: userWithoutPassword,
+    accessToken,
+    refreshToken,
+  };
 };
 
 export const signInService = async (email: string, password: string) => {
@@ -44,5 +52,12 @@ export const signInService = async (email: string, password: string) => {
   if (!isValidPassword) throw new NotFoundError("Contraseña incorrecta");
 
   const { password: _, ...userWithoutPassword } = user;
-  return userWithoutPassword;
+
+  const { accessToken, refreshToken } = generateAuthTokens(user.id, user.email);
+
+  return {
+    user: userWithoutPassword,
+    accessToken,
+    refreshToken,
+  };
 };

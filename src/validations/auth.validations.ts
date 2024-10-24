@@ -1,8 +1,14 @@
 import { body } from "express-validator";
 
 export const validateSignUp = [
-  body("email").isEmail().withMessage("El email no es válido"),
+  body("email")
+    .notEmpty()
+    .withMessage("El email es requerido")
+    .isEmail()
+    .withMessage("El email no es válido"),
   body("password")
+    .notEmpty()
+    .withMessage("La contraseña es requerida")
     .isString()
     .withMessage("La contraseña debe ser un string")
     .isLength({ min: 8 })

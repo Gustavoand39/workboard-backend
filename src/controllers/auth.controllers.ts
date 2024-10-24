@@ -7,7 +7,10 @@ import { sendSuccessDataResponse } from "@/utils";
 export const signUp = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  const user = await signUpService(email, password);
+  const { accessToken, refreshToken, user } = await signUpService(
+    email,
+    password
+  );
 
   sendSuccessDataResponse(res, "Usuario creado exitosamente", user, 201);
 });
@@ -15,7 +18,10 @@ export const signUp = asyncHandler(async (req: Request, res: Response) => {
 export const signIn = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  const user = await signInService(email, password);
+  const { accessToken, refreshToken, user } = await signInService(
+    email,
+    password
+  );
 
   sendSuccessDataResponse(res, "Usuario autenticado exitosamente", user);
 });

@@ -1,5 +1,10 @@
 import { PrismaClient } from "@prisma/client";
-import { hashedPassword, ConflictError, NotFoundError } from "@/utils";
+import {
+  hashedPassword,
+  ConflictError,
+  NotFoundError,
+  comparePassword,
+} from "@/utils";
 
 const prisma = new PrismaClient();
 
@@ -21,6 +26,22 @@ export const signUpService = async (email: string, password: string) => {
   });
 
   if (!user) throw new NotFoundError("No se pudo crear el usuario");
+
+  const { password: _, ...userWithoutPassword } = user;
+  return userWithoutPassword;
+};
+
+export const signInService = async (email: string, password: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (!user) throw new NotFoundError("Usuario no encontrado");
+
+  const isValidPassword = await comparePassword(password, user.password);
+  if (!isValidPassword) throw new NotFoundError("Contraseña incorrecta");
 
   const { password: _, ...userWithoutPassword } = user;
   return userWithoutPassword;

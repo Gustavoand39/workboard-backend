@@ -12,3 +12,5 @@ export const validateSignUp = [
     .matches(/[!@#$%^&*(),.?":{}|<>]/)
     .withMessage("La contraseña debe tener al menos un caracter especial"),
 ];
+
+export const validateSignIn = validateSignUp;

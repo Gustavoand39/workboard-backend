@@ -19,3 +19,19 @@ export const updateNameService = async (id: string, fullName: string) => {
 
   return user;
 };
+
+export const deleteAccountService = async (id: string) => {
+  const userExists = await prisma.user.findUnique({
+    where: { id },
+  });
+
+  if (!userExists) throw new NotFoundError("Usuario no encontrado");
+
+  await prisma.user.delete({
+    where: { id },
+  });
+
+  const { password, ...user } = userExists;
+
+  return user;
+};

@@ -1,11 +1,15 @@
 import { Router } from "express";
 
 import { validateAuth } from "@/middlewares";
-import { updateName } from "@/controllers/account.controllers";
+import { deleteAccount, updateName } from "@/controllers/account.controllers";
 
 // ? Api path: /api/v1/account
 const router = Router();
 
-router.patch("/:id", validateAuth, updateName);
+router.use(validateAuth);
+
+router.patch("/:id", updateName);
+
+router.delete("/:id", deleteAccount);
 
 export default router;

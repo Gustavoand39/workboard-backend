@@ -3,17 +3,19 @@ import { createServer, Server as httpServer } from "http";
 import cors from "cors";
 
 import { errorHandler } from "@/middlewares";
+import authRoutes from "@/routes/auth.routes";
 
 export class Server {
   private static instance: Server;
   private app: Application;
   private httpServer: httpServer;
   private port: number;
+  private apiPrefix: string = "/api/v1";
 
   constructor() {
     this.app = express();
     this.httpServer = createServer(this.app);
-    this.port = parseInt(process.env.SERVER_PORT || "3001");
+    this.port = parseInt(process.env.SERVER_PORT || "3000");
 
     this.initMiddlewares();
     this.initRoutes();
@@ -40,7 +42,7 @@ export class Server {
   }
 
   private initRoutes(): void {
-    // Add routes here
+    this.app.use(`${this.apiPrefix}/auth`, authRoutes);
   }
 
   private errorHandler(): void {

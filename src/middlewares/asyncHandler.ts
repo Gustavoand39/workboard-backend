@@ -11,16 +11,19 @@ type AsyncHandler = (
  *
  * @param {AsyncHandler} fn - Controlador asíncrono.
  * @returns {Function} Middleware.
- * 
+ *
  * @example
  * app.get("/users", asyncHandler(async (req, res) => {
  *  const users = await User.find();
  * res.json(users);
  * }));
  */
-export const asyncHandler =
-  (fn: AsyncHandler): Function => (req: Request, res: Response, next: NextFunction) => {
+export const asyncHandler = (
+  fn: AsyncHandler
+): ((req: Request, res: Response, next: NextFunction) => void) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch((error) => {
       next(error);
     });
   };
+};

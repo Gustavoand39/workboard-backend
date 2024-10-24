@@ -1,6 +1,17 @@
 import type { Response } from "express";
 import type { ValidationError } from "express-validator";
 
+type CookieOptions = {
+  httpOnly?: boolean;
+  maxAge?: number;
+  secure?: boolean;
+  sameSite?: "strict" | "lax" | "none";
+  path?: string;
+};
+
+export const ONE_HOUR = 60 * 60 * 1000;
+export const SEVEN_DAYS = ONE_HOUR * 24 * 7;
+
 /**
  * Envia una respuesta con un mensaje de éxito.
  *
@@ -44,6 +55,40 @@ export const sendSuccessDataResponse = <T>(
     message,
     data,
   });
+};
+
+/**
+ * Envia una cookie en la respuesta.
+ *
+ * @param {Response} res - Objeto de respuesta de Express.
+ * @param {string} name - Nombre de la cookie.
+ * @param {string} value - Valor de la cookie.
+ * @param {CookieOptions} options - Opciones de la cookie.
+ * @returns {void}
+ * @example
+ * sendCookie(res, "accessToken", accessToken, {
+ *   httpOnly: true,
+ *   maxAge: 60 * 60 * 1000,
+ *   secure: false,
+ *   sameSite: "lax",
+ *   path: "/",
+ * });
+ */
+export const sendCookie = (
+  res: Response,
+  name: string,
+  value: string,
+  options?: CookieOptions
+): void => {
+  const defaultOptions: CookieOptions = {
+    httpOnly: true,
+    maxAge: ONE_HOUR,
+    secure: false,
+    sameSite: "lax",
+    path: "/",
+  };
+
+  res.cookie(name, value, { ...defaultOptions, ...options });
 };
 
 /**

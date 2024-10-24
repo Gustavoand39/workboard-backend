@@ -1,5 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
 import { CustomError } from "@/classes/CustomError";
+import {
+  sendErrorStatus,
+  sendServerError,
+  sendValidationError,
+  ValidationError,
+} from "@/utils";
 
 export const errorHandler = (
   err: CustomError | Error,
@@ -9,16 +15,15 @@ export const errorHandler = (
 ): void => {
   console.error(err);
 
-  if (err instanceof CustomError) {
-    res.status(err.statusCode).json({
-      success: false,
-      message: err.message,
-    });
+  if (err instanceof ValidationError) {
+    sendValidationError(res, "Datos inválidos en la petición", err.errors!);
     return;
   }
 
-  res.status(500).json({
-    success: false,
-    message: "Error interno del servidor.",
-  });
+  if (err instanceof CustomError) {
+    sendErrorStatus(res, err.message, err.statusCode);
+    return;
+  }
+
+  sendServerError(res);
 };

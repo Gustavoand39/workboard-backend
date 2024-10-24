@@ -1,11 +1,18 @@
 import { PrismaClient } from "@prisma/client";
-import { hashedPassword, NotFoundError } from "@/utils";
+import { hashedPassword, ConflictError, NotFoundError } from "@/utils";
 
 const prisma = new PrismaClient();
 
 export const signUpService = async (email: string, password: string) => {
-  const hashPassword = await hashedPassword(password);
+  const userExists = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
 
+  if (userExists) throw new ConflictError("Ya existe un usuario con ese email");
+
+  const hashPassword = await hashedPassword(password);
   const user = await prisma.user.create({
     data: {
       email,

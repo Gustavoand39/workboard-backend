@@ -13,3 +13,10 @@ export class AuthenticationError extends CustomError {
     super(message, 401);
   }
 }
+
+// Error de conflicto, como cuando un recurso ya existe
+export class ConflictError extends CustomError {
+  constructor(message: string = "Recurso en conflicto") {
+    super(message, 409);
+  }
+}

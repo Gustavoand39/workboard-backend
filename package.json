@@ -6,7 +6,9 @@
     "start": "bun dist/index.js",
     "dev": "bun src/index.ts",
     "dev:watch": "bun --watch src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "prisma:deploy": "bunx prisma migrate deploy",
+    "prisma:dev": "bunx prisma migrate dev"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
